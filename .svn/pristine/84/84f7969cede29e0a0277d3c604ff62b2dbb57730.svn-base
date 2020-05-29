@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="dcmp-system"
+  id="myeclipse.1503722215238"
+  context-root="/system"
+  j2ee-spec="1.7"
+  archive="dcmp-system.war">
+  <attributes>
+    <attribute name="webrootdir" value="webapp" />
+  </attributes>
+</project-module>
+

@@ -1,0 +1,43 @@
+package com.great.manager.service.Impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.great.base.service.impl.BaseServiceImpl;
+import com.great.manager.dao.TemperatureRecordDao;
+import com.great.manager.entity.STemperatureRecord;
+import com.great.manager.service.TemperatureRecordService;
+import com.great.tool.PageBean;
+
+@Service
+public class TemperatureRecordServiceImpl extends BaseServiceImpl<STemperatureRecord> implements TemperatureRecordService {
+	
+	@Autowired
+	private TemperatureRecordDao temperatureRecordDao;
+
+	public void getResult(PageBean pageBean) {
+		this.temperatureRecordDao.getResult(pageBean);
+	}
+
+	@Override
+	public List<STemperatureRecord> findAlarmToday(String todayStr) {
+		return this.temperatureRecordDao.findAlarmToday(todayStr);
+	}
+
+	@Override
+	public int countDetectionNum() {
+		return this.temperatureRecordDao.countDetectionNum();
+	}
+
+	@Override
+	public int countVisitorNum() {
+		return this.temperatureRecordDao.countVisitorNum();
+	}
+
+	@Override
+	public int countTempAlarmNum() {
+		return this.temperatureRecordDao.countTempAlarmNum();
+	}
+}

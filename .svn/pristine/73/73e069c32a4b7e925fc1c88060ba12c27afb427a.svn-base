@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="js/parameter.js"></script>
+    <script language="JavaScript" src="js/event.js"></script>
+    <script type="text/javascript" src="js/loadModel.js"></script>
+    <script type="text/javascript" src="js/loadLayer.js"></script>
+    <script type="text/javascript" src="js/roam.js"></script>
+    <script type="text/javascript" src="js/controller.js"></script>
+    <script type="text/javascript" src="js/tools.js"></script>
+    <script type="text/javascript" src="js/pageButton.js"></script>
+    <script type="text/javascript" src="js/initScene.js"></script>
+    <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var height = $(window).height();
+            $("#VPSDKCtrl").css("height", height);
+            serverIp = window.parent.serverIp;
+            serverPort = window.parent.serverPort;
+        });
+    </script>
+
+    <!--开始绑定event事件-->
+    <!--绑定鼠标左键事件-->
+    <script language="javascript" type="text/javascript" event="FireOnLButtonDown(x,y)" for="VPSDKCtrl">
+        //鼠标左键按下时触发
+    </script>
+
+    <script language="javascript" type="text/javascript" event="FireOnLButtonUp(x,y)" for="VPSDKCtrl">
+        //鼠标左键抬起时触发
+        click(x, y);
+        creatModel(x, y);
+    </script>
+
+    <!--绑定鼠标右键事件-->
+    <script language="JavaScript" type="text/javascript" event="FireOnRButtonDown(x,y)" for="VPSDKCtrl">
+        //鼠标右键按下时触发
+    </script>
+
+    <script language="javascript" type="text/javascript" event="FireOnRButtonUp(x,y)" for="VPSDKCtrl">
+        //鼠标右键抬起时触发
+        getCoordinate(x, y);
+    </script>
+
+    <!--绑定响应器消息事件-->
+    <script language="javascript" type="text/javascript" event="FireOnResponserNotify(str, type)" for="VPSDKCtrl">
+        onFireOnResponser(str, type);
+        //			GetPickLayerAtt();
+    </script>
+
+    <script language="javascript" type="text/javascript" event="FireOnLayerNotify(layerid , type)" for="VPSDKCtrl">
+        roam(layerid, type);
+    </script>
+    <!--结束event事件绑定-->
+
+    <style>
+        #menuFrame {
+            position: absolute;
+            border-radius: 20px;
+            /*border-color: transparent;*/
+        }
+
+        .block {
+            display: none;
+        }
+
+        html {
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0px;
+        }
+    </style>
+
+</head>
+
+<body onload="InitScene()" style="width: 100%;height: 900px;">
+<!-- 		<input type="button" value="点击显隐地下2层" onclick="h()"></input> -->
+<div class="block">
+    <input class="blockButton" id="Button1" type="button" value="加载单个CPM" onclick="loadNetC3sModel()"/>
+    <input class="blockButton" id="Button2" type="button" value="加载多个CPM" onclick="loadCpmModel()"/>
+    <input class="blockButton" id="Button21" type="button" value="加载文字" onclick="loadPointAndText()"/>
+    <input class="blockButton" id="Button3" type="button" value="加载本地倾斜摄影数据(sigma处理数据)" onclick="loadSmesh()"/>
+    <input class="blockButton" id="Button4" tyse="button" value="加载本地倾斜摄影数据(原始数据)" onclick="loadOriginalSmesh()"/>
+    <input class="blockButton" id="Button5" type="button" value="左键点击获取经纬度" onclick="openOnLButtonUp()"/>
+    <input class="blockButton" id="Button6" type="button" value="右键点击获取经纬度和视角坐标" onclick="saveCoordinateValue()()"/>
+    <input class="blockButton" id="Button7" type="button" value="获取postioninfo值" onclick="Getpostioninfo()"/>
+    <input class="blockButton" id="Button8" type="button" value="转到预设的坐标和视角" onclick="fly(postioninfo)"/>
+    <input class="blockButton" id="Button9" type="button" value="绘制巡更路线" onclick="draw2DPolyline()"/>
+    <input class="blockButton" id="Button50" type="button" value="绘制巡更路线" onclick="deleteLine()"/>
+    <input class="blockButton" id="Button10" type="button" value="显示巡更路线" onclick="showPath()"/>
+    <input class="blockButton" id="Button11" type="button" value="第一人称视角巡更" onclick="keepWatch()"/>
+    <input class="blockButton" id="Button12" type="button" value="室外视角巡更" onclick="outKeepWatch()"/>
+    <!--<input id="Button13" type="button" value="获取LayerId" onclick="PickLineOpen()" />-->
+    <input class="blockButton" id="Button14" type="button" value="按照位置加载模型" onclick="loadPointAndModel()"/>
+    <input class="blockButton" id="Button15" type="button" value="强制刷新SDK和当前页面" onclick="refresh()"/>
+    <input class="blockButton" id="Button16" type="button" value="开启矢量图层拾取器" onclick="pick()"/>
+    <input class="blockButton" id="Button17" type="button" value="获取图层id" onclick="getLayerID()"/>
+    <input class="blockButton" id="Button18" type="button" value="向Resource静态资源中添加值" onclick="pushReource()"/>
+    <input class="blockButton" id="Button19" type="button" value="弹出窗口" onclick="showWegdit()"/>
+    <input class="blockButton" id="Button20" type="button" value="关闭弹窗" onclick="removeWegdit()"/>
+    <input class="blockButton" id="Button23" type="button" value="页面固定位置" onclick="showWebDialog()"/>
+    <input class="blockButton" id="Button24" type="button" value="查看pointLeft值" onclick="showPointLeft()"/>
+    <input class="blockButton" id="Button25" type="button" value="查看pointLeft值" onclick="createVectorEdit()"/>
+    <input class="blockButton" id="Button26" type="button" value="跳转网页" onclick="tz()"/>
+    <input class="blockButton" id="Button27" type="button" value="选择模型" onclick="selectValue()"/>
+    <input class="blockButton" id="Button40" type="button" value="自己选择位置和模型加载" onclick="pointModelLayer()"/>
+    <input class="blockButton" id="Button39" type="button" value="选择模型着色" onclick="OpenPick()"/>
+    <input class="blockButton" id="Button38" type="button" value="取消选择模型着色" onclick="ClosePick()"/>
+    <input id="Button29" type="button" value="对象旋转" onclick="addResAxis()"/>
+    <input id="Button30" type="button" value="关闭对象旋转" onclick="removeResAxis()"/>
+    <input id="Button31" type="button" value="获取layerId" onclick="getLayerId()"/>
+    <input id="Button49" type="button" value="获取Coordinate" onclick="returnCoordinate()"/>
+    <input class="blockButton" id="Button46" type="button" value="移除标记图层" onclick="removeLayer(cameraPicLayer)"/>
+</div>
+<!-- 		<input type="text" value="" id="modelName" placeholder="请输入模型名字：" /> -->
+<!-- 		<select> -->
+<!-- 			<option>地下二层</option> -->
+<!-- 			<option>地下1层</option> -->
+<!-- 			<option>展厅</option> -->
+<!-- 			<option>会议室</option> -->
+<!-- 			<option>海康大楼</option> -->
+<!-- 		</select> -->
+<!-- 		<select id="testSelect"> -->
+<!-- 			<option id="10" value="人">人</option> -->
+<!-- 			<option id="20" value="枪机">枪机</option> -->
+<!-- 			<option id="30" value="球机">球机</option> -->
+<!-- 			<option id="5" value="汽车">汽车</option> -->
+<!-- 		</select> -->
+<!-- 		<iframe id="menuFrame" allowtransparency="true" src="123.html"></iframe> -->
+<!--<iframe style="height: 100px; width: 10%; position: absolute; top: 900px; left: 10px;" src="123.html"></iframe>
+<iframe style="height: 100px; width: 10%; position: absolute; top: 90px; left: 1800px;" src="123.html"></iframe>
+<iframe style="height: 100px; width: 10%; position: absolute; top: 900px; left: 1800px;" src="123.html"></iframe>
+<iframe id="dIframe" name="dIframe" style="height: 45%; width: 45%%; position: absolute; top: 450px; left: 900px; display: none;" src="123.html"></iframe>-->
+<object id="VPSDKCtrl" classid="CLSID:E6F71384-437A-48ED-8E01-CD280CADF44F" style="width: 100%; height: 980px"></object>
+<script language="JavaScript" type="text/javascript">
+    function VPSDKCtrl
+
+    ::FireOnResponserNotify(str, type)
+    {
+        onFireOnResponser(str, type);
+    }
+
+    function saveCoordinateValue() {
+        if (openRButtonState) {
+            openRButtonState = false;
+        } else {
+            openRButtonState = true;
+        }
+    }
+
+    function openOnLButtonUp() {
+        if (openLButtonState) {
+            openLButtonState = false;
+        } else {
+            openLButtonState = true;
+        }
+    }
+
+    //			function h() {
+    //				mLayer.hide("1层");
+    //				mLayer.hide("2层");
+    //				mLayer.hide("3层");
+    //				mLayer.hide("4层");
+    //				mLayer.hide("5层");
+    //				mLayer.hide("6层");
+    //				mLayer.hide("7层");
+    //				mLayer.hide("8层");
+    //			}
+
+    function VPSDKCtrl
+
+    ::FireOnRButtonUp(x, y)
+    {
+        getCoordinate(x, y);
+    }
+
+    function VPSDKCtrl
+
+    ::FireOnLButtonUp(x, y)
+    {
+        click(x, y);
+// 				creatModel(x, y);
+    }
+
+    function VPSDKCtrl
+
+    ::FireOnLayerNotify(layerid, type)
+    {
+        roam(layerid, type);
+    }
+</script>
+</body>
+
+</html>

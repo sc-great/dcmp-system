@@ -1,0 +1,133 @@
+package com.great.manager.dao.Impl;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.great.base.dao.impl.BaseDaoImpl;
+import com.great.manager.dao.ClientInfoDao;
+import com.great.manager.dao.PersonDao;
+import com.great.manager.dao.TemperatureRecordDao;
+import com.great.manager.entity.BPerson;
+import com.great.manager.entity.STemperatureRecord;
+import com.great.tool.PageBean;
+
+/**
+ * @author LM
+ */
+@Repository
+public class TemperatureRecordDaoImpl extends BaseDaoImpl implements TemperatureRecordDao {
+	
+	@Autowired
+	private PersonDao personDao;
+	@Autowired
+	private ClientInfoDao clientInfoDao;
+	
+	public void getResult(PageBean pageBean) {
+		StringBuffer hql = new StringBuffer();
+		hql.append("from STemperatureRecord where 1=1 ");
+		
+		int isAlarm = (int) pageBean.getMap().get("isAlarm");
+		if (isAlarm == 1)
+			hql.append("and isAlarm = 1 ");
+		
+		// 简单处理注入
+		String templet = (String) pageBean.getMap().get("userName");
+		String clientId = (String) pageBean.getMap().get("clientId");
+		String userName = templet.replaceAll("\'|%", "\"");
+		if (userName != null && !"".equals(userName)) {
+			hql.append("and pName like '%" + userName + "%'");
+		}
+		if (clientId != null && !"".equals(clientId)) {
+			hql.append("and clientId like '%" + clientId + "%'");
+		}
+		String startTime = (String) pageBean.getMap().get("startTime");
+		if (startTime != null && !"".equals(startTime)) {
+			hql.append(" and createTime >'" + startTime + "'");
+		}
+		String endTime = (String) pageBean.getMap().get("endTime");
+		if (endTime != null && !"".equals(endTime)) {
+			hql.append(" and createTime < '" + endTime + "'");
+		}
+		String hqlString = "select count(*) " + hql.toString();
+		Long countLong = (Long) getSession().createQuery(hqlString).uniqueResult();
+		pageBean.setCount(countLong.intValue());
+		hql.append(" order by createTime desc");
+		Query query = getSession().createQuery(hql.toString());
+		query.setFirstResult(pageBean.getStartNum());
+		query.setMaxResults(pageBean.getLimit());
+		List<STemperatureRecord> list = query.list();
+		
+		List<STemperatureRecord> list_new = new ArrayList<>();
+		String uCode = "";
+		BPerson person = null;
+		for (STemperatureRecord temperature : list) {
+			uCode = temperature.getUCode();
+			temperature.setClientName(clientInfoDao.getClientByCode(temperature.getClientId()).getName());
+			if (uCode == null || "".equals(uCode)) {
+				list_new.add(temperature);
+				continue;
+			}
+			person = personDao.getPersonById(uCode);
+			if (person == null) {
+				list_new.add(temperature);
+				continue;
+			}
+			temperature.setPerson(person);
+			list_new.add(temperature);
+		}
+		
+		pageBean.setData(list_new);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<STemperatureRecord> findAlarmToday(String todayStr) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from STemperatureRecord ").append(" where isAlarm = 1 and createTime >= '" + todayStr + "' order by createTime desc");
+		Query query = getSession().createQuery(hql.toString());
+		List<STemperatureRecord> temperatureRecordList = (List<STemperatureRecord>) query.list();
+		List<STemperatureRecord> list_new = new ArrayList<>();
+		String uCode = "";
+		BPerson person = null;
+		for (STemperatureRecord temperature : temperatureRecordList) {
+			uCode = temperature.getUCode();
+			temperature.setClientName(clientInfoDao.getClientByCode(temperature.getClientId()).getName());
+			if (uCode == null || "".equals(uCode)) {
+				list_new.add(temperature);
+				continue;
+			}
+			person = personDao.getPersonById(uCode);
+			if (person == null) {
+				list_new.add(temperature);
+				continue;
+			}
+			temperature.setPerson(person);
+			list_new.add(temperature);
+		}
+		return list_new;
+	}
+
+	@Override
+	public int countDetectionNum() {
+		String sql = "select count(*) from STemperatureRecord where createTime >= '" + (new SimpleDateFormat("yyyy-MM-dd").format(new Date())) + "'";
+		return Integer.parseInt((Long) getSession().createQuery(sql).uniqueResult() + "");
+	}
+
+	@Override
+	public int countVisitorNum() {
+		String sql = "select count(*) from STemperatureRecord where trim(uCode) != '' and createTime >= '" + (new SimpleDateFormat("yyyy-MM-dd").format(new Date())) + "'";
+		return Integer.parseInt((Long) getSession().createQuery(sql).uniqueResult() + "");
+	}
+
+	@Override
+	public int countTempAlarmNum() {
+		String sql = "select count(*) from STemperatureRecord where isAlarm = 1 and createTime >= '" + (new SimpleDateFormat("yyyy-MM-dd").format(new Date())) + "'";
+		return Integer.parseInt((Long) getSession().createQuery(sql).uniqueResult() + "");
+	}
+}

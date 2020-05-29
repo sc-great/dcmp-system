@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        function getValue() {
+            child.window.saveCoordinateValue();
+        }
+
+        function saveValue() {
+            child.window.returnCoordinateValue();
+        }
+    </script>
+</head>
+<body>
+<iframe name="child" src="index1.html" width="100%" height="900px"></iframe>
+<input type="button" value="获取当前视角" onclick="getValue()"/>
+<input type="button" value="提交" onclick="saveValue()"/>
+</body>
+</html>

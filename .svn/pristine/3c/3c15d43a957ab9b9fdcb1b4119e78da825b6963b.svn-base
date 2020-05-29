@@ -1,0 +1,199 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ include file="/common/common_taglib.jsp"%>
+<%@ include file="/common/common_css.jsp"%>
+<%@ include file="/common/common_js.jsp"%>
+<!DOCTYPE html>
+<html class="iframe-h">
+<head>
+<meta charset="UTF-8">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title></title>
+<link rel="stylesheet" type="text/css" href="${path}/css/list.css" />
+<link rel="stylesheet" type="text/css" href="${path}/css/admin.css" />
+<style>
+.layui-toolbar {
+	width: calc(40% - 55px);
+	display: flex;
+	justify-content: flex-end;
+}
+</style>
+</head>
+<body>
+<div class="serch-bar search-header">
+	<div class="search-input" style="width:100%;">
+		姓名：
+		<div class="layui-inline layui-search-input">
+			<input name="userName" class="layui-input" id="userName"
+				autocomplete="off">
+		</div>
+		查询时间：
+		<div class="layui-inline layui-search-date">
+			<input class="layui-input" id="startTime" name="startTime"
+				type="text" placeholder="开始时间" autocomplete="off">
+		</div>
+		-
+		<div class="layui-inline layui-search-date" style="margin-right:30px;">
+			<input class="layui-input" id="endTime" name="endTime" type="text"
+				placeholder="结束时间" autocomplete="off">
+		</div>
+		部门：
+		<div class="layui-inline layui-search-date">
+			<select class="layui-input" id="org">
+				<option value="">部门一</option>
+				<option>部门二</option>
+				<option>部门三</option>
+				<option>部门四</option>
+			</select>
+		</div>
+		<button class="layui-btn layui-btn-orange layui-btn-search"
+			data-type="reload">查询</button>
+	</div>
+</div>
+<table id="personList">
+<th><td>序号</td><td>姓名</td><td>2020-03-28</td><td>2020-03-29</td><td>2020-03-30</td><td>2020-03-31</td><td>2020-03-32</td></th>
+</table>
+<script src="${path}/plugin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="${path}/js/chart/jquery-1.9.1.js"></script>
+<script type="text/javascript">
+$(function() {
+	$.post("${path}/campusOrg/getOrgList", function (data) {
+		if (data == undefined || data.length == 0)
+			return;
+		$("#org").html("");
+		var option = "";
+		for (var i = 0; i < data.length; i ++) {
+			option = "<option value=\"" + data[i].id + "\">" + data[i].name + "</option>";
+			$("#org").append(option);
+		}
+	}, "json");
+})
+
+$(".layui-btn-search").click(function() {
+	var startTime = $("#startTime").val();
+	if (startTime == undefined || startTime == "") {
+		alert("请添加查询条件！");
+		return;
+	}
+	var userName = $("#userName").val();
+	var endTime = $("#endTime").val();
+	var org = $("#org").val();
+	$.post("${path}/api/getRecord", {
+		"userName" : userName,
+		"startTime" : startTime,
+		"endTime" : endTime,
+		"org" : org
+	}, function (data) {
+		console.log(data);
+		if (data.code != 200) {
+			alert("大佬，您请求失败了哦！");
+			return;
+		}
+		var personList = data.data.personList;
+		$("#personList").html("");
+		var num = 5;
+		var th = "<th><td>序号</td><td>姓名</td>";
+		var start = 28;
+		for (var i = 0; i < num; i ++) {
+			th += ("<td>2020-03-" + (start + i) + "</td>");
+		}
+		th += "</th>";
+		$("#personList").append(th);
+		var tr = "";
+		var td = "";
+		for (var i = 0; i < personList.length; i ++) {
+			tr = "<tr id=\"tr_" + personList[i].PId + "\"><td>" + (i + 1) + "</td><td>" + personList[i].PName + "</td>";
+			for (var m = 0; m < num; m ++) {
+				tr += ("<td>2020-03-" + (start + m) + "</td>");
+			}
+			tr += "</tr>";
+			$("#personList").append(tr);
+		}
+	}, "json");
+});
+</script>
+<script type="text/javascript">
+var selectAreaId;
+var selectAreaName;
+layui.use([ 'table', 'laydate', 'form', 'jquery' ], function() {
+	var table = layui.table;
+	var laydate = layui.laydate;
+	var $ = layui.jquery;
+	var layerIndex;
+	var layerInitWidth;
+	var layerInitHeight;
+	$(window).resize(function() {
+		resizeLayer($, layerIndex, layerInitWidth, layerInitHeight);
+	});
+	var areaName = decodeURI('${param.areaName }');
+	// 查询条件开始时间实发始化
+	var endDate = laydate.render({
+		elem : '#endtime', // 选择器结束时间
+		type : 'datetime',
+		min : "1970-1-1", // 设置min默认最小值
+		done : function(value, date) {
+			if (value == null || value == "") {
+				startDate.config.max = {
+					year : "2099",
+					month : "12",
+					date : "31",
+					hours : "0",
+					minutes : "0",
+					seconds : "0"
+				}
+			} else {
+				startDate.config.max = {
+					year : date.year,
+					month : date.month - 1, // 关键
+					date : date.date,
+					hours : date.hours,
+					minutes : date.minutes,
+					seconds : date.seconds - 1
+				}
+			}
+		}
+	});
+	// 日期范围
+	var startDate = laydate.render({
+		elem : '#startTime',
+		type : 'datetime',
+		max : "2099-12-31", // 设置一个默认最大值
+		done : function(value, date) {
+			endDate.config.min = {
+				year : date.year,
+				month : date.month - 1, // 关键
+				date : date.date,
+				hours : date.hours,
+				minutes : date.minutes,
+				seconds : date.seconds
+			};
+			var nowStrDate = date.year + "-"
+							+ date.month + "-"
+							+ date.date + " "
+							+ date.hours + ":"
+							+ date.minutes + ":"
+							+ date.seconds;
+			var endyear = endDate.config.dateTime.year;
+			var endmonth = endDate.config.dateTime.month + 1;
+			var enddate = endDate.config.dateTime.date;
+			var endhours = endDate.config.dateTime.hours;
+			var endminutes = endDate.config.dateTime.minutes;
+			var endseconds = endDate.config.dateTime.seconds;
+			var nowEndDate = endyear + "-"
+							+ endmonth + "-" + enddate
+							+ " " + endhours + ":"
+							+ endminutes + ":"
+							+ endseconds;
+			nowEndDate = new Date(nowEndDate);
+			nowStrDate = new Date(nowStrDate);
+			if (nowEndDate < nowStrDate) {
+				layer.msg('选择的结束时间小于开始时间了');
+			}
+		}
+	});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+package com.great.manager.service;
+
+import com.great.base.service.BaseService;
+import com.great.manager.entity.BPersonInfo;
+
+
+/**
+ * @author ZQQ
+ * 手机登录数据返回接口
+ * */
+public interface PersonnelInfoService extends BaseService<BPersonInfo> {
+
+
+
+	
+}

@@ -1,0 +1,74 @@
+@CHARSET "UTF-8";
+.serch-bar {
+    margin-top: 28px;
+    margin-bottom: 26px;
+    margin-left: 55px; /* 修改注意 */
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    width: 70%;
+    display: flex;
+    align-items: center;
+}
+
+.layui-toolbar {
+    width: calc(45% - 55px);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.layui-toolbar-leave {
+    width: calc(25% - 55px);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.layui-table-view {
+    margin: 0px !important;
+}
+
+.layui-search-input {
+    width: 187px;
+    margin-right: 30px;
+}
+
+.layui-search-only-input {
+    width: 187px;
+}
+
+.layui-search-date {
+    width: 194px;
+}
+
+.layui-table[lay-even] tr:nth-child(even) {
+
+}
+
+.layui-form.layui-border-box.layui-table-view {
+    border: none;
+}
+
+.layui-table-view .layui-table[lay-skin=line] tr {
+    height: 45px;
+}
+
+.layui-table-view .layui-table td {
+    height: 50px;
+}
+
+.layui-lay-left {
+    float: left;
+    /* padding-left: 10%; */
+}
+
+@media (min-width: 900px) {
+    .layui-table[lay-skin=line] tr th:first-child > div {
+        margin-left: 40px;
+    }
+
+    .layui-table-body > .layui-table[lay-skin=line] tr td:first-child > div {
+        margin-left: 40px;
+    }
+}

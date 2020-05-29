@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+  http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+
+	<mvc:annotation-driven />
+
+	<!-- 设置使用注解的类所在的包 -->
+	<context:component-scan base-package="com.great.*">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+
+	<!-- 启用spring mvc 注解 -->
+	<context:annotation-config />
+	<!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/" p:suffix=".jsp" />
+	<!-- 静态资源文件处理 -->
+	<mvc:resources location="/js/" mapping="/js/**"/>
+	<mvc:resources location="/css/" mapping="/css/**"/>
+	<mvc:resources location="/images/" mapping="/images/**"/>
+	<mvc:resources location="/plugin/" mapping="/plugin/**"/>
+	<mvc:resources location="/uploadImage/" mapping="/uploadImage/**"/>
+	<mvc:resources location="/userAccessFace/" mapping="/userAccessFace/**"/>
+	<mvc:resources location="/gc/" mapping="/gc/**"/>
+	<!-- 完成请求和注解POJO的映射 -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<util:list id="beanList">
+				<ref bean="mappingJacksonHttp2MessageConverter" />
+			</util:list>
+		</property>
+	</bean>
+	<bean id="mappingJacksonHttp2MessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- <property name="maxUploadSize" value="100000" /> -->
+		<!-- <property name="maxInMemorySize" value="10240" /> -->
+	</bean>
+	<!-- 定义拦截器 
+	<mvc:interceptors>  
+    	<bean class="com.great.filter.LoginIntercepter"></bean>      
+    </mvc:interceptors>
+    -->    
+</beans>

@@ -1,0 +1,11 @@
+c3p0.driverClass=com.mysql.jdbc.Driver
+c3p0.jdbcUrl=jdbc:mysql://172.16.12.224:3306/dcmp_system?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+#c3p0.jdbcUrl=jdbc:mysql://127.0.0.1:3306/dcmp_system?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+c3p0.user=root
+c3p0.password=root
+
+c3p0.testConnectionOnCheckin=true
+c3p0.automaticTestTable=C3P0TestTable
+c3p0.idleConnectionTestPeriod=18000
+c3p0.maxIdleTime=25000
+c3p0.testConnectionOnCheckout=true

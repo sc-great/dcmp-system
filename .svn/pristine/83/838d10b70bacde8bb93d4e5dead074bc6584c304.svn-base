@@ -1,0 +1,11 @@
+package com.great.manager.dao;
+
+import com.great.base.dao.BaseDao;
+
+
+/**
+ * @author ZQQ
+ * 手机登录数据返回接口
+ * */
+public interface PersonnelInfoDao extends BaseDao {
+}

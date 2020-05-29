@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0" id="WebApp_1534238198016">
+    <display-name>dcmp-system</display-name>
+
+    <filter>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.hibernate5.support.OpenSessionInViewFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>characterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>characterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>outFilter</filter-name>
+        <filter-class>com.great.filter.RequestOutFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>outFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Spring MVC配置 -->
+    <servlet>
+        <servlet-name>springMVC</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- 可以自定义servlet.xml配置文件的位置和名称,默认在WEB-INF目录下,名称为servlet-name.xml -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:springMVC-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springMVC</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!-- <listener>
+        <listener-class>com.great.tool.SessionListener</listener-class>
+    </listener>  -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext-*.xml</param-value>
+    </context-param>
+
+    <welcome-file-list>
+        <welcome-file>login.jsp</welcome-file>
+    </welcome-file-list>
+
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/jsp/error/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/jsp/error/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/jsp/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/jsp/error/500.jsp</location>
+    </error-page>
+</web-app>

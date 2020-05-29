@@ -1,0 +1,15 @@
+package com.great.manager.dao.Impl;
+
+import org.springframework.stereotype.Repository;
+import com.great.base.dao.impl.BaseDaoImpl;
+import com.great.manager.dao.PersonnelInfoDao;
+
+
+/**
+ * @author ZQQ
+ * 手机登录数据返回接口
+ * */
+@Repository
+public class PersonnelInfoDaoImpl extends BaseDaoImpl implements PersonnelInfoDao {
+
+}

@@ -1,0 +1,47 @@
+package com.great.manager.action;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.great.base.action.BaseAction;
+import com.great.base.entity.Message2Page2;
+import com.great.manager.entity.BPerson;
+import com.great.manager.entity.STemperatureRecord;
+import com.great.manager.service.PersonService;
+import com.great.manager.service.PersonnelFileInfoService;
+import com.great.manager.service.TemperatureRecordService;
+import com.great.tool.JsonCovert;
+
+import net.sf.json.JSONObject;
+
+/**
+ * 考勤统计
+ * @author LM
+ *
+ */
+@RestController
+@RequestMapping(value = "/api")
+public class AttendanceRecordAction extends BaseAction {
+	
+	@Autowired
+	private PersonService personService;
+	@Autowired
+	private TemperatureRecordService temperatureRecordService;
+	
+	@RequestMapping("/getRecord")
+	public Message2Page2 getAttendanceRecord(String userName, String startTime, String endTime, String org) {
+		JSONObject jsonObject = new JSONObject();
+		// 按条件找出所有人
+		List<BPerson> personList = personService.getPersonByOrgAndLikeName(org, userName);
+		// 按条件找出所有考勤
+		JSONObject attendanceList = temperatureRecordService.getRecordByTimeLikeName(userName, startTime, endTime, org);
+		jsonObject.put("personList", personList);
+		jsonObject.put("attendanceList", attendanceList);
+		Message2Page2 message2Page2 = new Message2Page2(true, 200, "", JsonCovert.filterNull(jsonObject));
+		System.out.println(message2Page2);
+		return message2Page2;
+	}
+}
